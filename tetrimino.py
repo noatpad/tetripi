@@ -18,19 +18,23 @@ all_tetriminos =  [
   [[0, 1, 5, 6], [2, 6, 5, 9]]
 ]
 
-drop_timer_limit = 25
+drop_timer_reset = 25
+blink_timer_reset = 7
 
 class Tetrimino:
   def __init__(self, game, block_type: int = None) -> None:
     block_index = block_type if block_type is not None else randrange(len(all_tetriminos))
     self.shapes = all_tetriminos[block_index]
     self.rotation = 0
-    self.drop_timer = 0
     self.landed = False
     self.game = game
     # Shift block to the center when needed
     self.x = int(matrix.cols / 2) - int(self.get_width() / 2)
     self.y = -1 if block_index == 0 else 0
+    # Timers
+    self.drop_timer = drop_timer_reset
+    self.blink_timer = blink_timer_reset
+    self.blink_on = True
 
   def get_shape(self) -> list[int]:
     return self.shapes[self.rotation]
@@ -82,7 +86,7 @@ class Tetrimino:
   def soft_drop(self):
     orig_y = self.y
     self.y += 1
-    self.drop_timer = 0
+    self.drop_timer = drop_timer_reset
 
     if not self.is_valid_move():
       self.y = orig_y
@@ -93,6 +97,12 @@ class Tetrimino:
       self.soft_drop()
 
   def fall(self):
-    self.drop_timer += 1
-    if self.drop_timer >= drop_timer_limit:
+    self.drop_timer -= 1
+    if not self.drop_timer:
       self.soft_drop()
+
+  def blink(self):
+    self.blink_timer -= 1
+    if not self.blink_timer:
+      self.blink_on = not self.blink_on
+      self.blink_timer = blink_timer_reset
