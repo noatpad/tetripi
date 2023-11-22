@@ -6,6 +6,7 @@ from tetrimino import Tetrimino
 State = Enum('TetrisState', ['Holding', 'Dropping', 'GameOver'])
 
 hold_timer_reset = 25
+game_over_blink_timer_reset = 7
 
 class Tetris:
   def __init__(self):
@@ -16,6 +17,8 @@ class Tetris:
     self.active_piece = Tetrimino(self)
     self.next_piece = Tetrimino(self)
     self.hold_timer = hold_timer_reset
+    self.game_over_blink_timer = game_over_blink_timer_reset
+    self.game_over_blink_on = True
 
   def update(self):
     if self.state == State.Holding:
@@ -31,8 +34,9 @@ class Tetris:
         blocks = self.land_piece()
         rows = sorted(set([y for (_, y) in blocks]))
         self.clear_lines(rows)
+        self.check_for_game_over()
     elif self.state == State.GameOver:
-      pass
+      self.blink_game_over()
 
   def draw(self):
     # Prepare data to display
@@ -44,6 +48,11 @@ class Tetris:
     if (show_active_block):
       for (x, y) in self.active_piece.get_blocks():
         grid[y][x] = True
+
+    # Blink "game over" blocks if needed
+    if (self.state == State.GameOver):
+      for x in range(self.cols):
+        grid[0][x] = self.game_over_blink_on if grid[0][x] else False
 
     # Display
     matrix.display(grid)
@@ -86,3 +95,13 @@ class Tetris:
       del self.board[row]
       self.board.insert(0, [False] * self.cols)
     return len(cleared)
+
+  def check_for_game_over(self):
+    if (any(x for x in self.board[0])):
+      self.state = State.GameOver
+
+  def blink_game_over(self):
+    self.game_over_blink_timer -= 1
+    if not self.game_over_blink_timer:
+      self.game_over_blink_on = not self.game_over_blink_on
+      self.game_over_blink_timer = game_over_blink_timer_reset
