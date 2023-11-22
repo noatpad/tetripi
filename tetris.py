@@ -24,15 +24,16 @@ class Tetris:
     if (a_button.pressed_or_held()):
       self.active_piece.rotate(True)
     if (b_button.pressed_or_held()):
-      self.active_piece.rotate(False)
+      self.active_piece.soft_drop()
+      # self.active_piece.hard_drop()
+      # self.active_piece.rotate(False)
 
     # Naturally drop active piece and land it if needed
     self.active_piece.fall()
     if self.active_piece.landed:
-      for (x, y) in self.active_piece.get_blocks():
-        self.board[y][x] = True
-      self.active_piece = self.next_piece
-      self.next_piece = Tetrimino(self)
+      blocks = self.land_piece()
+      rows = sorted(set([y for (_, y) in blocks]))
+      self.clear_lines(rows)
 
   def draw(self):
     # Prepare data to display
@@ -44,3 +45,22 @@ class Tetris:
 
     # Display
     matrix.display(grid)
+
+  # Returns the blocks that have landed
+  def land_piece(self) -> list[tuple[int, int]]:
+    blocks = self.active_piece.get_blocks()
+    for (x, y) in blocks:
+      self.board[y][x] = True
+    self.active_piece = self.next_piece
+    self.next_piece = Tetrimino(self)
+    return blocks
+
+  # Returns the number of lines cleared
+  def clear_lines(self, rows) -> int:
+    cleared = 0
+    for row in rows:
+      if (all(x for x in self.board[row])):
+        del self.board[row]
+        self.board.insert(0, [False] * self.cols)
+        cleared += 1
+    return cleared
