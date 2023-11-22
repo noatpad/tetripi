@@ -26,6 +26,14 @@ class Tetris:
     if (b_button.pressed_or_held()):
       self.active_piece.rotate(False)
 
+    # Naturally drop active piece and land it if needed
+    self.active_piece.fall()
+    if self.active_piece.landed:
+      for (x, y) in self.active_piece.get_blocks():
+        self.board[y][x] = True
+      self.active_piece = self.next_piece
+      self.next_piece = Tetrimino(self)
+
   def draw(self):
     # Prepare data to display
     grid = [row[:] for row in self.board]
