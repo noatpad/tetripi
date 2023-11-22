@@ -1,7 +1,7 @@
 from random import randrange
 from inout import matrix
 
-ALL_TETRIMINOS =  [
+all_tetriminos =  [
   # I block
   [[4, 5, 6, 7], [1, 5, 9, 13]],
   # O block
@@ -18,20 +18,12 @@ ALL_TETRIMINOS =  [
   [[0, 1, 5, 6], [2, 6, 5, 9]]
 ]
 
-DROP_TIMER_LIMIT = 25
+drop_timer_limit = 25
 
 class Tetrimino:
-  shapes: list[list[int]]
-  x: int
-  y: int
-  rotation: int
-  drop_timer: int
-  landed: bool
-  game = None
-
   def __init__(self, game, block_type: int = None) -> None:
-    block_index = block_type if block_type is not None else randrange(len(ALL_TETRIMINOS))
-    self.shapes = ALL_TETRIMINOS[block_index]
+    block_index = block_type if block_type is not None else randrange(len(all_tetriminos))
+    self.shapes = all_tetriminos[block_index]
     self.rotation = 0
     self.drop_timer = 0
     self.landed = False
@@ -102,5 +94,5 @@ class Tetrimino:
 
   def fall(self):
     self.drop_timer += 1
-    if self.drop_timer >= DROP_TIMER_LIMIT:
+    if self.drop_timer >= drop_timer_limit:
       self.soft_drop()

@@ -1,19 +1,21 @@
+from enum import Enum
+from time import sleep
 from inout import matrix, left_button, right_button, a_button, b_button
 from tetrimino import Tetrimino
 
-class Tetris:
-  board: list[list[bool]]
-  rows: int
-  cols: int
-  active_piece: Tetrimino
-  next_piece: Tetrimino
+State = Enum('TetrisState', ['Playing', 'Clearing', 'GameOver'])
 
+hold_timer_max = 25
+
+class Tetris:
   def __init__(self):
+    self.state = State.Playing
     self.rows = matrix.rows
     self.cols = matrix.cols
     self.board = [[False] * self.cols for _ in range(self.rows)]
     self.active_piece = Tetrimino(self)
     self.next_piece = Tetrimino(self)
+    self.hold_timer = hold_timer_max
 
   def update(self):
     # Move active block
@@ -29,11 +31,12 @@ class Tetris:
       # self.active_piece.rotate(False)
 
     # Naturally drop active piece and land it if needed
-    self.active_piece.fall()
-    if self.active_piece.landed:
-      blocks = self.land_piece()
-      rows = sorted(set([y for (_, y) in blocks]))
-      self.clear_lines(rows)
+    if self.state == State.Playing:
+      self.active_piece.fall()
+      if self.active_piece.landed:
+        blocks = self.land_piece()
+        rows = sorted(set([y for (_, y) in blocks]))
+        self.clear_lines(rows)
 
   def draw(self):
     # Prepare data to display
@@ -56,11 +59,16 @@ class Tetris:
     return blocks
 
   # Returns the number of lines cleared
-  def clear_lines(self, rows) -> int:
-    cleared = 0
-    for row in rows:
-      if (all(x for x in self.board[row])):
-        del self.board[row]
-        self.board.insert(0, [False] * self.cols)
-        cleared += 1
-    return cleared
+  def clear_lines(self, rows: list[int]) -> int:
+    cleared = list(filter(lambda row: all(row for row in self.board[row]), rows))
+    cleared_r = cleared.copy()
+    cleared_r.reverse()
+    for row in cleared_r:
+      for col in range(self.cols):
+        matrix.off(col, row)
+        sleep(1/30)
+
+    for row in cleared:
+      del self.board[row]
+      self.board.insert(0, [False] * self.cols)
+    return len(cleared)
