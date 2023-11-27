@@ -39,7 +39,13 @@ class Tetrimino:
     return self.shapes[self.rotation]
 
   def get_blocks(self) -> list[tuple[int, int]]:
-    return [(self.x + (i % 4), self.y + int(i / 4)) for i in self.get_shape()]
+    blocks = []
+    for i in self.get_shape():
+      x = self.x + (i % 4)
+      y = self.y + int(i / 4)
+      if y >= 0:
+        blocks.append((x, y))
+    return blocks
 
   def get_width(self) -> int:
     xs = [x % 4 for x in self.get_shape()]
@@ -47,8 +53,8 @@ class Tetrimino:
 
   def is_valid_move(self) -> bool:
     return all((x >= 0 and x < len(self.game.board[0]) and
-                y >= 0 and y < len(self.game.board) and
-                not self.game.board[y][x]) for (x, y) in self.get_blocks())
+                y < len(self.game.board) and
+                (y < 0 or not self.game.board[y][x])) for (x, y) in self.get_blocks())
 
   # Returns True if the block successfully moved
   def move(self, right=True) -> bool:
