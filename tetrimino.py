@@ -1,5 +1,6 @@
 from random import randrange
-from inout import matrix
+from buzzer_wrapper import Sounds
+from inout import matrix, buzzer
 
 all_tetriminos =  [
   # I block
@@ -57,9 +58,11 @@ class Tetrimino:
     self.x += 1 if right else -1
 
     if self.is_valid_move():
+      buzzer.play(Sounds.Move)
       return True
 
     self.x = orig_x
+    buzzer.play(Sounds.Invalid_Move)
     return False
 
   # Returns True if the block successfully rotated
@@ -69,6 +72,7 @@ class Tetrimino:
     self.rotation = (self.rotation + (1 if clockwise else -1)) % len(self.shapes)
 
     if self.is_valid_move():
+      buzzer.play(Sounds.Rotate)
       return True
 
     can_shift = True
@@ -78,23 +82,29 @@ class Tetrimino:
       shifted = shifted or can_shift
 
     if shifted:
+      buzzer.play(Sounds.Rotate)
       return True
 
     self.rotation = orig_rot
+    buzzer.play(Sounds.Invalid_Move)
     return False
 
-  def soft_drop(self):
+  def soft_drop(self, hard=False):
     orig_y = self.y
     self.y += 1
     self.drop_timer = drop_timer_reset
 
-    if not self.is_valid_move():
+    if self.is_valid_move():
+      if not hard:
+        buzzer.play(Sounds.Fall)
+    else:
       self.y = orig_y
       self.landed = True
 
   def hard_drop(self):
     while not self.landed:
-      self.soft_drop()
+      self.soft_drop(hard=True)
+    buzzer.play(Sounds.Hard_Drop)
 
   def fall(self):
     self.drop_timer -= 1

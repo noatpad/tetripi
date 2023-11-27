@@ -1,7 +1,8 @@
 from enum import Enum
 from time import sleep
-from inout import matrix, left_button, right_button, a_button, b_button
+from inout import matrix, left_button, right_button, a_button, b_button, buzzer
 from tetrimino import Tetrimino
+from buzzer_wrapper import Sounds
 
 State = Enum('TetrisState', ['Holding', 'Dropping', 'GameOver'])
 
@@ -79,6 +80,7 @@ class Tetris:
     self.next_piece = Tetrimino(self)
     self.hold_timer = hold_timer_reset
     self.state = State.Holding
+    buzzer.play(Sounds.Land)
     return blocks
 
   # Returns the number of lines cleared
@@ -89,7 +91,7 @@ class Tetris:
     for row in cleared_r:
       for col in range(self.cols):
         matrix.off(col, row)
-        sleep(1/30)
+        buzzer.play(Sounds.Clear, wait=True)
 
     for row in cleared:
       del self.board[row]
@@ -99,6 +101,7 @@ class Tetris:
   def check_for_game_over(self):
     if (any(x for x in self.board[0])):
       self.state = State.GameOver
+      buzzer.play(Sounds.Game)
 
   def blink_game_over(self):
     self.game_over_blink_timer -= 1

@@ -1,11 +1,6 @@
 from gpiozero import Button
 
 class Button_Wrapper:
-  button: Button
-  pressed: bool
-  held: bool
-  ran_pressed: bool
-
   def __init__(self, pin: int):
     self.button = Button(pin, hold_time=0.6)
     self.pressed = False

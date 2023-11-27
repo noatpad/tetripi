@@ -3,11 +3,6 @@ import board
 from adafruit_ht16k33.matrix import MatrixBackpack16x8
 
 class Matrix_Wrapper:
-  matrix: MatrixBackpack16x8
-  buffer: list[list[bool]]
-  rows: int
-  cols: int
-
   def __init__(self) -> None:
     self.matrix = MatrixBackpack16x8(board.I2C())
     self.matrix.brightness = 0.5
