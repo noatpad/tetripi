@@ -1,4 +1,5 @@
 from random import randrange
+from constants import blink_duration
 from buzzer_wrapper import Sounds
 from inout import matrix, buzzer
 from tick_timer import Timer, On_Off_Timer
@@ -20,9 +21,6 @@ all_tetriminos =  [
   [[0, 1, 5, 6], [2, 6, 5, 9]]
 ]
 
-drop_timer_reset = 25
-blink_timer_reset = 7
-
 class Tetrimino:
   def __init__(self, game, block_type: int = None) -> None:
     block_index = block_type if block_type is not None else randrange(len(all_tetriminos))
@@ -34,8 +32,8 @@ class Tetrimino:
     self.x = int(matrix.cols / 2) - int(self.get_width() / 2)
     self.y = -1 if block_index == 0 else 0
     # Timers
-    self.drop_timer = Timer(drop_timer_reset, self.soft_drop)
-    self.blink_timer = On_Off_Timer(blink_timer_reset)
+    self.drop_timer = Timer(game.speed, self.soft_drop)
+    self.blink_timer = On_Off_Timer(blink_duration)
 
   def get_shape(self) -> list[int]:
     return self.shapes[self.rotation]
@@ -111,3 +109,6 @@ class Tetrimino:
 
   def blink(self):
     self.blink_timer.update()
+
+  def update_drop_duration(self, duration: int):
+    self.drop_timer.duration = duration

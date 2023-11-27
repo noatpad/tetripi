@@ -1,7 +1,6 @@
 from time import time
+from constants import fps
 from tetris import Tetris
-
-fps = 1/30
 
 def tetripi():
   print('Hello tetripi')
