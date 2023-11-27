@@ -1,8 +1,8 @@
 from enum import Enum
-from time import sleep
 from inout import matrix, left_button, right_button, a_button, b_button, buzzer
 from tetrimino import Tetrimino
 from buzzer_wrapper import Sounds
+from tick_timer import Timer, On_Off_Timer
 
 State = Enum('TetrisState', ['Holding', 'Dropping', 'GameOver'])
 
@@ -17,17 +17,17 @@ class Tetris:
     self.board = [[False] * self.cols for _ in range(self.rows)]
     self.active_piece = Tetrimino(self)
     self.next_piece = Tetrimino(self)
-    self.hold_timer = hold_timer_reset
-    self.game_over_blink_timer = game_over_blink_timer_reset
-    self.game_over_blink_on = True
+    self.hold_timer = Timer(hold_timer_reset, lambda: self.set_state(State.Dropping))
+    self.game_over_blink_timer = On_Off_Timer(game_over_blink_timer_reset)
+
+  def set_state(self, state: State):
+    self.state = state
 
   def update(self):
     if self.state == State.Holding:
       self.control_block(allow_drop=False)
       self.active_piece.blink()
-      self.hold_timer -= 1
-      if not self.hold_timer:
-        self.state = State.Dropping
+      self.hold_timer.update()
     elif self.state == State.Dropping:
       self.control_block(True)
       self.active_piece.fall()
@@ -37,14 +37,14 @@ class Tetris:
         self.clear_lines(rows)
         self.check_for_game_over()
     elif self.state == State.GameOver:
-      self.blink_game_over()
+      self.game_over_blink_timer.update()
 
   def draw(self):
     # Prepare data to display
     grid = [row[:] for row in self.board]
 
     # Draw active block
-    show_active_block = ((self.state == State.Holding and self.active_piece.blink_on) or
+    show_active_block = ((self.state == State.Holding and self.active_piece.blink_timer.on) or
                          (self.state == State.Dropping))
     if (show_active_block):
       for (x, y) in self.active_piece.get_blocks():
@@ -53,7 +53,7 @@ class Tetris:
     # Blink "game over" blocks if needed
     if (self.state == State.GameOver):
       for x in range(self.cols):
-        grid[0][x] = self.game_over_blink_on if grid[0][x] else False
+        grid[0][x] = self.game_over_blink_timer.on if grid[0][x] else False
 
     # Display
     matrix.display(grid)
@@ -78,8 +78,8 @@ class Tetris:
       self.board[y][x] = True
     self.active_piece = self.next_piece
     self.next_piece = Tetrimino(self)
-    self.hold_timer = hold_timer_reset
-    self.state = State.Holding
+    self.hold_timer.reset()
+    self.set_state(State.Holding)
     buzzer.play(Sounds.Land)
     return blocks
 
@@ -100,11 +100,5 @@ class Tetris:
 
   def check_for_game_over(self):
     if (any(x for x in self.board[0])):
-      self.state = State.GameOver
+      self.set_state(State.GameOver)
       buzzer.play(Sounds.Game)
-
-  def blink_game_over(self):
-    self.game_over_blink_timer -= 1
-    if not self.game_over_blink_timer:
-      self.game_over_blink_on = not self.game_over_blink_on
-      self.game_over_blink_timer = game_over_blink_timer_reset

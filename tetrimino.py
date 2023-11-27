@@ -1,6 +1,7 @@
 from random import randrange
 from buzzer_wrapper import Sounds
 from inout import matrix, buzzer
+from tick_timer import Timer, On_Off_Timer
 
 all_tetriminos =  [
   # I block
@@ -33,9 +34,8 @@ class Tetrimino:
     self.x = int(matrix.cols / 2) - int(self.get_width() / 2)
     self.y = -1 if block_index == 0 else 0
     # Timers
-    self.drop_timer = drop_timer_reset
-    self.blink_timer = blink_timer_reset
-    self.blink_on = True
+    self.drop_timer = Timer(drop_timer_reset, self.soft_drop)
+    self.blink_timer = On_Off_Timer(blink_timer_reset)
 
   def get_shape(self) -> list[int]:
     return self.shapes[self.rotation]
@@ -92,7 +92,7 @@ class Tetrimino:
   def soft_drop(self, hard=False):
     orig_y = self.y
     self.y += 1
-    self.drop_timer = drop_timer_reset
+    self.drop_timer.reset()
 
     if self.is_valid_move():
       if not hard:
@@ -107,12 +107,7 @@ class Tetrimino:
     buzzer.play(Sounds.Hard_Drop)
 
   def fall(self):
-    self.drop_timer -= 1
-    if not self.drop_timer:
-      self.soft_drop()
+    self.drop_timer.update()
 
   def blink(self):
-    self.blink_timer -= 1
-    if not self.blink_timer:
-      self.blink_on = not self.blink_on
-      self.blink_timer = blink_timer_reset
+    self.blink_timer.update()
