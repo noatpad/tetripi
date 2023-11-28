@@ -15,16 +15,17 @@ class Tetris:
     self.state = State.Holding
     self.rows = matrix.rows
     self.cols = matrix.cols
+    self._reset_board()
+
+  def _reset_board(self):
     self.board = [[False] * self.cols for _ in range(self.rows)]
-    # Score and speed
     self.score = 0
     self.speed = min_speed
-    # Pieces
     self.active_piece = Tetrimino(self)
     self.next_piece = Tetrimino(self)
-    # Timers
     self.hold_timer = Timer(hold_duration, lambda: self.set_state(State.Dropping))
     self.game_over_blink_timer = On_Off_Timer(blink_duration)
+    buzzer.play(Sounds.Start)
 
   def set_state(self, state: State):
     self.state = state
@@ -44,6 +45,7 @@ class Tetris:
         self.check_for_game_over()
     elif self.state == State.GameOver:
       self.game_over_blink_timer.update()
+      self.wait_for_restart()
 
   def draw(self):
     # Prepare data to display
@@ -106,7 +108,7 @@ class Tetris:
     lines = len(cleared)
     if lines:
       self.score += lines
-      self.set_speed()
+      self.calc_speed()
 
     return lines
 
@@ -115,7 +117,7 @@ class Tetris:
       self.set_state(State.GameOver)
       buzzer.play(Sounds.Game)
 
-  def set_speed(self):
+  def calc_speed(self):
     # For each 5 (originally 10) lines cleared, you go "up a level"
     lvl = int(self.score / 5) + 1
     if lvl <= 9:
@@ -138,5 +140,11 @@ class Tetris:
     self.active_piece.update_drop_duration(self.speed)
     self.next_piece.update_drop_duration(self.speed)
 
+  def wait_for_restart(self):
+    if (a_button.pressed_or_held() and b_button.pressed_or_held()):
+      self._reset_board()
+      self.set_state(State.Dropping)
+
   def quit(self):
     matrix.clear()
+    buzzer.play(Sounds.Quit)

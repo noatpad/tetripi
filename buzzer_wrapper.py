@@ -7,7 +7,7 @@ from buzzer_beep import Beep, Pause
 beep_move = [Beep('E4')]
 
 Sounds = Enum('Beeps', ['Move', 'Rotate', 'Fall', 'Hard_Drop', 'Invalid_Move',
-                        'Land', 'Clear', 'Game'])
+                        'Land', 'Clear', 'Start', 'Quit', 'Game'])
 Sound_Map = {
   Sounds.Move: [Beep('C4')],
   Sounds.Rotate: [Beep('B3')],
@@ -16,6 +16,8 @@ Sound_Map = {
   Sounds.Invalid_Move: [Beep('A3')],
   Sounds.Land: [Beep('D4')],
   Sounds.Clear: [Beep('A5', 0.05)],
+  Sounds.Start: [Beep('A4', 0.05), Beep('B4', 0.05), Beep('C5', 0.05), Beep('D5', 0.05), Beep('E5', 0.05)],
+  Sounds.Quit: [Beep('E5', 0.05), Beep('D5', 0.05), Beep('C5', 0.05), Beep('B4', 0.05), Beep('A4', 0.05)],
   Sounds.Game: [Beep('B3', 0.4), Beep('A3', 0.4), Pause(0.8), Beep('B3', 0.4), Beep('A3', 0.4)]
 }
 
