@@ -41,3 +41,6 @@ class Matrix_Wrapper:
       for x, val in enumerate(row):
         if (data[y][x] != self.buffer[y][x]):
           self._set(x, y, val)
+
+  def clear(self):
+    self.matrix.fill(False)

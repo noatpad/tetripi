@@ -137,3 +137,6 @@ class Tetris:
     # NOTE: Not exactly optimal
     self.active_piece.update_drop_duration(self.speed)
     self.next_piece.update_drop_duration(self.speed)
+
+  def quit(self):
+    matrix.clear()

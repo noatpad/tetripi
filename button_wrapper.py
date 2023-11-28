@@ -26,7 +26,5 @@ class Button_Wrapper:
     if self.pressed and not self.ran_pressed:
       self.ran_pressed = True
       return True
-    # NOTE: Throttle the held action to x amount of time
-    if self.held:
-      return True
-    return False
+    # IDEA: Throttle the held action to x amount of time
+    return self.held
