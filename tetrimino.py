@@ -1,5 +1,4 @@
 from random import randrange
-from constants import blink_duration
 from buzzer_wrapper import Sounds
 from inout import matrix, buzzer
 from tick_timer import Timer, On_Off_Timer
@@ -33,7 +32,7 @@ class Tetrimino:
     self.y = -1 if block_index == 0 else 0
     # Timers
     self.drop_timer = Timer(game.speed, self.soft_drop)
-    self.blink_timer = On_Off_Timer(blink_duration)
+    self.blink_timer = On_Off_Timer()
 
   def get_shape(self) -> list[int]:
     return self.shapes[self.rotation]

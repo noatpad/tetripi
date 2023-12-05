@@ -1,5 +1,7 @@
 from typing import Callable
 
+default_blink_duration = 7
+
 class Timer:
   def __init__(self, duration: int, callback: Callable, recurring=False):
     self.duration = duration
@@ -18,7 +20,7 @@ class Timer:
     self.now = self.duration
 
 class On_Off_Timer(Timer):
-  def __init__(self, duration: int, start_value=True):
+  def __init__(self, duration=default_blink_duration, start_value=True):
     super().__init__(duration, self.toggle_value, recurring=True)
     self.on = start_value
 

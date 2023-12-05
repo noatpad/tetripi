@@ -1,7 +1,8 @@
 from time import time
-from constants import fps
 from tetris import Tetris
 from inout import power_switch
+
+fps = 1/30
 
 def tetripi():
   tetris: Tetris = None

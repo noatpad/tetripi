@@ -1,5 +1,4 @@
 from enum import Enum
-from constants import blink_duration
 from inout import matrix, left_button, right_button, up_button, down_button, a_button, b_button, buzzer
 from tetrimino import Tetrimino
 from buzzer_wrapper import Sounds
@@ -24,7 +23,7 @@ class Tetris:
     self.active_piece = Tetrimino(self)
     self.next_piece = Tetrimino(self)
     self.hold_timer = Timer(hold_duration, lambda: self.set_state(State.Dropping))
-    self.game_over_blink_timer = On_Off_Timer(blink_duration)
+    self.game_over_blink_timer = On_Off_Timer()
     buzzer.play(Sounds.Start)
 
   def set_state(self, state: State):
