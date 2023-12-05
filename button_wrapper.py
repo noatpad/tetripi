@@ -1,8 +1,9 @@
-from gpiozero import Button
+from gpiozero import Button, LED
 
 class Button_Wrapper:
-  def __init__(self, pin: int):
-    self.button = Button(pin, hold_time=0.6)
+  def __init__(self, buttonPin: int, ledPin: int):
+    self.button = Button(buttonPin, hold_time=0.6)
+    self.led = LED(ledPin)
     self.pressed = False
     self.held = False
     self.ran_pressed = False
@@ -13,6 +14,7 @@ class Button_Wrapper:
 
   def _activate(self):
     self.pressed = True
+    self.led.on()
 
   def _hold(self):
     self.held = True
@@ -21,6 +23,7 @@ class Button_Wrapper:
     self.pressed = False
     self.held = False
     self.ran_pressed = False
+    self.led.off()
 
   def pressed_or_held(self) -> bool:
     if self.pressed and not self.ran_pressed:

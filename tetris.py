@@ -1,6 +1,6 @@
 from enum import Enum
 from constants import blink_duration
-from inout import matrix, left_button, right_button, a_button, b_button, buzzer
+from inout import matrix, left_button, right_button, up_button, down_button, a_button, b_button, buzzer
 from tetrimino import Tetrimino
 from buzzer_wrapper import Sounds
 from tick_timer import Timer, On_Off_Timer
@@ -72,12 +72,14 @@ class Tetris:
       self.active_piece.move(False)
     if (right_button.pressed_or_held()):
       self.active_piece.move(True)
+    if (allow_drop and down_button.pressed_or_held()):
+      self.active_piece.soft_drop()
+    if (allow_drop and up_button.pressed_or_held()):
+      self.active_piece.hard_drop()
     if (a_button.pressed_or_held()):
       self.active_piece.rotate(True)
-    if (allow_drop and b_button.pressed_or_held()):
-      self.active_piece.soft_drop()
-      # self.active_piece.hard_drop()
-      # self.active_piece.rotate(False)
+    if (b_button.pressed_or_held()):
+      self.active_piece.rotate(False)
 
   # Returns the blocks that have landed
   def land_piece(self) -> list[tuple[int, int]]:
@@ -89,6 +91,7 @@ class Tetris:
     self.hold_timer.reset()
     self.set_state(State.Holding)
     buzzer.play(Sounds.Land)
+    matrix.display(self.board)
     return blocks
 
   # Returns the number of lines cleared

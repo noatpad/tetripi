@@ -1,7 +1,7 @@
 from time import time
 from constants import fps
 from tetris import Tetris
-from inout import power_led, power_switch
+from inout import power_switch
 
 def tetripi():
   tetris: Tetris = None
@@ -22,13 +22,11 @@ def tetripi():
     if on:
       if not tetris:
         tetris = Tetris()
-        power_led.on()
       tetris.update()
       tetris.draw()
     elif tetris:
         tetris.quit()
         tetris = None
-        power_led.off()
 
     dt = 0
 

@@ -4,10 +4,11 @@ from button_wrapper import Button_Wrapper
 from buzzer_wrapper import Buzzer_Wrapper
 
 matrix = Matrix_Wrapper()
-left_button = Button_Wrapper(5)
-right_button = Button_Wrapper(6)
-a_button = Button_Wrapper(13)
-b_button = Button_Wrapper(19)
-buzzer = Buzzer_Wrapper(16)
-power_switch = DigitalInputDevice(12, pull_up=True)
-power_led = LED(26)
+up_button = Button_Wrapper(16, 19)
+left_button = Button_Wrapper(5, 6)
+right_button = Button_Wrapper(20, 21)
+down_button = Button_Wrapper(12, 13)
+a_button = Button_Wrapper(17, 18)
+b_button = Button_Wrapper(23, 24)
+buzzer = Buzzer_Wrapper(22)
+power_switch = DigitalInputDevice(27, pull_up=True)
