@@ -2,7 +2,7 @@ from enum import Enum
 from time import time, sleep
 from threading import Thread
 from gpiozero import TonalBuzzer
-from buzzer_beep import Beep, Pause
+from components.beep import Beep, Pause
 
 beep_move = [Beep('E4')]
 
@@ -21,7 +21,7 @@ Sound_Map = {
   Sounds.Game: [Beep('B3', 0.4), Beep('A3', 0.4), Pause(0.8), Beep('B3', 0.4), Beep('A3', 0.4)]
 }
 
-class Buzzer_Wrapper:
+class Sound_Buzzer:
   def __init__(self, pin: int):
     self.buzzer = TonalBuzzer(pin)
     self.thread = Thread()

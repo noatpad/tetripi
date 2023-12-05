@@ -2,7 +2,7 @@ from typing import Any
 import board
 from adafruit_ht16k33.matrix import MatrixBackpack16x8
 
-class Matrix_Wrapper:
+class LED_Matrix:
   def __init__(self) -> None:
     self.matrix = MatrixBackpack16x8(board.I2C())
     self.matrix.brightness = 0.5

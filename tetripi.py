@@ -1,6 +1,6 @@
 from time import time
 from tetris import Tetris
-from inout import power_switch
+from components.devices import power_switch
 
 fps = 1/30
 

@@ -1,7 +1,7 @@
 from random import randrange
-from buzzer_wrapper import Sounds
-from inout import matrix, buzzer
-from tick_timer import Timer, On_Off_Timer
+from components.sound_buzzer import Sounds
+from components.devices import matrix, buzzer
+from utils.timer import Timer, On_Off_Timer
 
 all_tetriminos =  [
   # I block

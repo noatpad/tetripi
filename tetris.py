@@ -1,8 +1,8 @@
 from enum import Enum
-from inout import matrix, left_button, right_button, up_button, down_button, a_button, b_button, buzzer
 from tetrimino import Tetrimino
-from buzzer_wrapper import Sounds
-from tick_timer import Timer, On_Off_Timer
+from components.devices import matrix, left_button, right_button, up_button, down_button, a_button, b_button, buzzer
+from components.sound_buzzer import Sounds
+from utils.timer import Timer, On_Off_Timer
 
 State = Enum('TetrisState', ['Holding', 'Dropping', 'GameOver'])
 

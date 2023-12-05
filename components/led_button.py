@@ -1,6 +1,6 @@
 from gpiozero import Button, LED
 
-class Button_Wrapper:
+class LED_Button:
   def __init__(self, buttonPin: int, ledPin: int):
     self.button = Button(buttonPin, hold_time=0.6)
     self.led = LED(ledPin)
